@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { Post, Comment, User } = require('../models');
-const auth = require('../utils/auth');
+const withAuth = require('../utils/auth');
 
 // get request for root path, retrieves posts from db
 router.get('/', (req, res) => {
@@ -72,5 +72,36 @@ router.get('/dashboard', withAuth, (req, res) => {
     }).then((posts) => {
         posts = posts.map((post) => post.get({ plain: true }));
         res.render('dashboard', { posts, loggedIn: req.session.loggedIn });
+    });
+});
+
+// get request for comment, retrieves post with its specified id
+router.get('/comment/:id', (req, res) => {
+    Post.findOne({
+        where: {
+            id: req.params.id
+        },
+        include: [
+            {
+                model: User
+            },
+            {
+                model: Comment,
+                include: [
+                    {
+                        model: User
+                    }
+                ]
+
+            }
+        ]
+    // if no post is found the status will render an error with this message
+    }).then((post) => {
+        if (!post) {
+            res.status(404).json({ message: 'There is no post found with this id' });
+            return;
+        }
+        post = post.get({ plain: true });
+        res.render('comment', { post, loggedIn: req.session.loggedIn });
     });
 });
