@@ -105,3 +105,33 @@ router.get('/comment/:id', (req, res) => {
         res.render('comment', { post, loggedIn: req.session.loggedIn });
     });
 });
+
+// get request finds a comment with a specified id for edit-comment
+router.get('/edit-comment/:id', withAuth, (req, res) => {
+    Comment.findOne({
+        where: {
+            id: req.params.id
+        },
+        include: [
+            {
+                model: User
+            },
+        ]
+    }).then((comment) => {
+        if (!comment) {
+            res.status(404).json({ message: 'There is no comment found with this id' });
+            return;
+        }
+        comment = comment.get({ plain: true });
+        res.render('edit-comment', { comment, loggedIn: req.session.loggedIn });
+    });
+});
+
+// get request logs out the user from the session
+router.get('/logout', (req, res) => {
+    req.session.destroy(() => {
+        res.redirect('/');
+    });
+});
+
+module.exports = router;
