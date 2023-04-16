@@ -27,3 +27,24 @@ router.post('/', withAuth, (req, res) => {
             });
     }
 });
+
+// put request that requires the middleware from utils/auth before a comment can be updated
+router.put('/:id', withAuth, async (req, res) => {
+    try {
+        const comment = await Comment.findOne({ where: { id: req.params.id }});
+        console.log(req.body, comment);
+        const commentData = await Comment.update(req.body, {
+            where: {
+                id: req.params.id,
+            },
+        });
+        console.log(commentData, 'commentData')
+        if (!commentData) {
+            res.status(404).json({ message: 'There is no comment found with this id' });
+            return;
+        }
+        res.status(200).json(commentData);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
