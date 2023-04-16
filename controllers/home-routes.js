@@ -34,3 +34,27 @@ router.get('signup', (req, res) => {
     }
     res.render('signup');
 });
+
+// 
+router.get('/posts/:id', (req, res) => {
+    Post.findOne({
+        where: {
+            id: req.params.id
+        },
+        include: [
+            {
+                model: User
+            },
+            {
+                model: Comment
+            }
+        ]
+    }).then((post) => {
+        if (!post) {
+            res.status(404).json({ message: 'There is no post with this id' });
+            return;
+        }
+        post = post.get({ plain: true });
+        res.render('edit-post', { post, loggedIn: req.session.loggedIn });
+    });
+});
