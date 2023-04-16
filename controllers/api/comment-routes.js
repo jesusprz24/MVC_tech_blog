@@ -48,3 +48,8 @@ router.put('/:id', withAuth, async (req, res) => {
         res.status(500).json(err);
     }
 });
+
+// delete function below
+
+
+module.exports = router;
