@@ -58,3 +58,19 @@ router.get('/posts/:id', (req, res) => {
         res.render('edit-post', { post, loggedIn: req.session.loggedIn });
     });
 });
+
+router.get('/dashboard', withAuth, (req, res) => {
+    Post.findAll({
+        where: {
+            user_id: req.session.user_id
+        },
+        include: [
+            {
+                model: User
+            }
+        ]
+    }).then((posts) => {
+        posts = posts.map((post) => post.get({ plain: true }));
+        res.render('dashboard', { posts, loggedIn: req.session.loggedIn });
+    });
+});
