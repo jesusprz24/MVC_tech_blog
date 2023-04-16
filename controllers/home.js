@@ -26,3 +26,11 @@ router.get('/login', (req, res) => {
     res.render('login');
 });
 
+// get request for signup path of server, if already logged in the code takes user to root path, if not renders sign up form
+router.get('signup', (req, res) => {
+    if(req.session.loggedIn) {
+        res.redirect('/');
+        return;
+    }
+    res.render('signup');
+});
