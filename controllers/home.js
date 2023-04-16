@@ -17,3 +17,12 @@ router.get('/', (req, res) => {
     });
 });
 
+// get request for login, if login goes through loggedIn is checked and will take user to root path
+router.get('/login', (req, res) => {
+    if(req.session.loggedIn) {
+        res.redirect('/');
+        return;
+    }
+    res.render('login');
+});
+
