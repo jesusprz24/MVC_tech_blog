@@ -35,3 +35,7 @@ router.put('/:id', withAuth, async (req, res) => {
         res.status(500).json(err);
     }
 });
+
+// delete request below ask how to do
+
+module.exports = router;
