@@ -39,6 +39,7 @@ router.post('/login', async (req, res) => {
             return;
         }
 
+        // is user logs in successfully it will succeed and say the message if not triggers error
         req.session.save(() => {
             console.log(userData.id, req.session);
             req.session.user_id = userData.id;
@@ -51,3 +52,18 @@ router.post('/login', async (req, res) => {
         res.status(400).json(err);
     }
 });
+
+// post request for the user to log out of the app
+router.post('/logout', (req, res) => {
+    if (req.session.loggedIn) {
+        console.log(req.session, 'Session has concluded');
+        req.session.destroy(() => {
+            res.status(204).end();
+        });
+    } else {
+        console.log(req.session, 'Log out unsuccessful')
+        res.status(404).end();
+    }
+});
+
+module.exports = router;
