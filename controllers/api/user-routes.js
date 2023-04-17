@@ -18,6 +18,7 @@ router.post('/', async (req, res) => {
     }
 });
 
+// post request for login, is something wrong triggers it it will error and send the massage of it being wrong
 router.post('/login', async (req, res) => {
     try {    
     const userData = await User.findOne({ where: { username: req.body.username } });
@@ -38,4 +39,15 @@ router.post('/login', async (req, res) => {
             return;
         }
 
-    })
+        req.session.save(() => {
+            console.log(userData.id, req.session);
+            req.session.user_id = userData.id;
+            req.session.loggedIn = true;
+
+            res.status(200).json({ user: userData, message: 'You are now logged in!' });
+        });
+    } catch (err) {
+        console.log(err)
+        res.status(400).json(err);
+    }
+});
